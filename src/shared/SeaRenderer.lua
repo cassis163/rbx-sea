@@ -1,9 +1,9 @@
-local TimeSyncService = require(script.Parent.TimeSyncService)
-
 local SeaRenderer = {}
 SeaRenderer.__index = SeaRenderer
 
-function SeaRenderer:Update(t)
+function SeaRenderer:Update(x, y, t)
+    self:_Reposition(x, y)
+
 	for _, bone in pairs(self._bones) do
 		bone.WorldPosition = self._waveFunction(bone.WorldPosition, t)
 	end
@@ -21,10 +21,15 @@ function SeaRenderer.new(mesh, waveFunction, parent, radius)
 	obj._meshPlane = mesh:WaitForChild("Plane")
 	obj._waveFunction = waveFunction
 	obj._parent = parent
-	obj._radius = radius or 100
+	obj._radius = radius or 2
+    obj._tileSize = 100
 	obj:_Init()
 
 	return obj
+end
+
+function SeaRenderer:_Reposition(x, y)
+    self._meshPlane.CFrame = CFrame.new(x - x % (self._tileSize * self._radius), 0, y - y % (self._tileSize * self._radius))
 end
 
 function SeaRenderer:_GetBones()
