@@ -6,16 +6,16 @@
 			"$className": "ReplicatedStorage",
 			"Common": {
 				"$path": "src/shared"
-			},
-			"Packages": {
-				"$path": "node_modules/@quenty"
 			}
 		},
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
 			"Server": {
 				"$path": "src/server"
-			}
+			},
+            "Nevermore": {
+                "$path": "node_modules/@quenty"
+            }
 		},
 		"StarterPlayer": {
 			"$className": "StarterPlayer",
