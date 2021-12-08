@@ -5,3 +5,4 @@ local Loader = require(NevermoreModules:FindFirstChild("loader"))
 
 Loader.bootstrapGame(NevermoreModules)
 NevermoreModules:Destroy()
+script:Destroy()
