@@ -3,6 +3,8 @@ local scaleMesh = require(script.Parent:WaitForChild("scaleMesh"))
 local SeaRenderer = {}
 SeaRenderer.__index = SeaRenderer
 
+local INITIAL_RADIUS = 125
+
 function SeaRenderer:Update(x, y, t)
     self:_Reposition(x, y)
 
@@ -13,8 +15,10 @@ end
 
 function SeaRenderer:_Init()
     self:_Normalize()
-    self:_Resize(10)
+    self:_Resize(INITIAL_RADIUS)
     self:_TransformToCircle()
+    self:_DisplaceBones()
+    -- self:_Test()
 	self._mesh.Parent = self._parent
 end
 
@@ -24,7 +28,7 @@ function SeaRenderer.new(mesh, waveFunction, parent, distanceFactor)
 	obj._meshPlane = mesh:WaitForChild("Plane")
 	obj._waveFunction = waveFunction
 	obj._parent = parent
-	obj._distanceFactor = distanceFactor or 3
+	obj._distanceFactor = distanceFactor or 0.1
     obj._bones = obj:_GetBones()
 	obj:_Init()
 
@@ -74,12 +78,33 @@ function SeaRenderer:_TransformToCircle()
 
         -- Reposition the bones to transform the mesh from rectangular to circular
         bone.Position /= Vector3.new(k, 1, k)
-
-        local d = bone.Position.Magnitude
-        if d > 1 then
-            bone.Position *= d^(1 + self._distanceFactor)
-        end
     end
 end
+
+function SeaRenderer:_DisplaceBones()
+    for _, bone in pairs(self._bones) do
+        local bX = bone.Position.X
+        local bY = bone.Position.Z
+
+        local d = math.sqrt((bX)^2 + (bY)^2)
+        local l = -0.01 * d^(1 + self._distanceFactor) + 1
+        local k = d^(1 - math.clamp(l, 0, 1))
+
+        bone.Position *= Vector3.new(k, 1, k)
+    end
+end
+
+-- function SeaRenderer:_Test()
+--     for _, bone in pairs(self._bones) do
+--         local test = Instance.new("Part")
+--         test.Anchored = true
+--         test.Shape = Enum.PartType.Ball
+--         test.CanCollide = false
+--         test.CFrame = bone.WorldCFrame + Vector3.new(0, 50, 0)
+--         test.BrickColor = BrickColor.Red()
+--         test.Size = Vector3.new(1, 1, 1) * 4
+--         test.Parent = workspace
+--     end
+-- end
 
 return SeaRenderer
