@@ -1,23 +1,30 @@
 local INITIAL_RADIUS = 125
 local TEXTURE_STRETCH_FIX = 8
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local scaleMesh = require(script.Parent:WaitForChild("scaleMesh"))
+local mesh = ReplicatedStorage:WaitForChild("SeaMesh")
 
 local SeaRenderer = {}
 SeaRenderer.__index = SeaRenderer
 
-function SeaRenderer.new(mesh, waveFunction, parent, distanceFactor)
+function SeaRenderer.new(waveFunction, height, distanceFactor)
 	local obj = setmetatable({}, SeaRenderer)
-	obj._mesh = mesh
-	obj._meshPlane = mesh:WaitForChild("Plane")
+	obj._mesh = mesh:Clone()
+	obj._meshPlane = obj._mesh:WaitForChild("Plane")
     obj._texture = obj._meshPlane:WaitForChild("Texture")
 	obj._waveFunction = waveFunction
-	obj._parent = parent
 	obj._distanceFactor = distanceFactor or 0.1
     obj._bones = obj:_GetBones()
+    obj._height = height
 	obj:_Init()
 
 	return obj
+end
+
+function SeaRenderer:Destroy()
+    self._mesh:Destroy()
 end
 
 function SeaRenderer:Update(x, y, t)
@@ -26,18 +33,21 @@ function SeaRenderer:Update(x, y, t)
     self:_RecalculateBonePositions(t)
 end
 
+function SeaRenderer:SetParent(parent)
+    self._mesh.Parent = parent
+end
+
 function SeaRenderer:_Init()
     self:_Normalize()
     self:_Resize(INITIAL_RADIUS)
     self:_DisplaceBones()
-    -- self:_Test()
 
 	self._mesh.Parent = self._parent
 end
 
 function SeaRenderer:_RecalculateBonePositions(t)
     for _, bone in pairs(self._bones) do
-		bone.WorldPosition = self._waveFunction(bone.WorldPosition, t)
+		bone.WorldPosition = self._waveFunction(bone.WorldPosition, t) + Vector3.new(0, self._height, 0)
 	end
 end
 
@@ -83,18 +93,5 @@ function SeaRenderer:_DisplaceBones()
         bone.Position *= Vector3.new(k, 1, k)
     end
 end
-
--- function SeaRenderer:_Test()
---     for _, bone in pairs(self._bones) do
---         local test = Instance.new("Part")
---         test.Anchored = true
---         test.Shape = Enum.PartType.Ball
---         test.CanCollide = false
---         test.CFrame = bone.WorldCFrame + Vector3.new(0, 50, 0)
---         test.BrickColor = BrickColor.Red()
---         test.Size = Vector3.new(1, 1, 1) * 4
---         test.Parent = workspace
---     end
--- end
 
 return SeaRenderer
