@@ -76,7 +76,7 @@ function SeaRenderer:_TransformToCircle()
         local theta = math.atan2(bY, bX)
         local k = getDistanceRatio(theta)
 
-        -- Reposition the bones to transform the mesh from rectangular to circular
+        -- Reposition the bones to transform the mesh from rectangular to somewhat circular
         bone.Position /= Vector3.new(k, 1, k)
     end
 end
