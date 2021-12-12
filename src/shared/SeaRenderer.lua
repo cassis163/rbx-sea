@@ -4,7 +4,7 @@ local TEXTURE_STRETCH_FIX = 8
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local scaleMesh = require(script.Parent:WaitForChild("scaleMesh"))
-local mesh = ReplicatedStorage:WaitForChild("SeaMesh")
+local mesh = ReplicatedStorage:WaitForChild("SeaMeshOld")
 
 local SeaRenderer = {}
 SeaRenderer.__index = SeaRenderer
@@ -29,7 +29,7 @@ end
 
 function SeaRenderer:Update(x, y, t)
     self:_Reposition(x, y)
-    self:_UpdateTexture(x, y)
+    -- self:_UpdateTexture(x, y)
     self:_RecalculateBonePositions(t)
 end
 
@@ -51,11 +51,11 @@ function SeaRenderer:_RecalculateBonePositions(t)
 	end
 end
 
-function SeaRenderer:_UpdateTexture(x, y)
-    -- This should be -x and -y in theory, but the textures are stretched
-    self._texture.OffsetStudsU = -x / TEXTURE_STRETCH_FIX
-    self._texture.OffsetStudsV = -y / TEXTURE_STRETCH_FIX
-end
+-- function SeaRenderer:_UpdateTexture(x, y)
+--     -- This should be -x and -y in theory, but the textures are stretched
+--     self._texture.OffsetStudsU = -x / TEXTURE_STRETCH_FIX
+--     self._texture.OffsetStudsV = -y / TEXTURE_STRETCH_FIX
+-- end
 
 function SeaRenderer:_Reposition(x, y)
     self._meshPlane.CFrame = CFrame.new(x, 0, y)
