@@ -1,5 +1,5 @@
 local INITIAL_RADIUS = 125
-local TEXTURE_STRETCH_FIX = 8
+-- local TEXTURE_STRETCH_FIX = 8
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
